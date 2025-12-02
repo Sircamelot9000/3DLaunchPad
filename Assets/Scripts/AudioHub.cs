@@ -16,7 +16,8 @@ public class AudioHub : MonoBehaviour
 
         // Main music player (expects Assets/Resources/Audio/song.wav)
         music = gameObject.AddComponent<AudioSource>();
-        music.clip = Load("song");
+        var song = Load("song"); 
+        if(song) music.clip = song;
         music.playOnAwake = false;
         music.loop = false;
         music.spatialBlend = 0f;
@@ -49,27 +50,46 @@ public class AudioHub : MonoBehaviour
         }
     }
 
-    public void OneShot(string clipName, float gain = 1f){
-        var clip = Load(clipName); if (!clip) return;
+    // [UPDATED] Direct AudioClip support (for Drag & Drop)
+    public void OneShot(AudioClip clip, float gain = 1f){
+        if (!clip) return;
         foreach (var s in pool){
             if (!s.isPlaying){ s.volume = gain; s.PlayOneShot(clip); return; }
         }
         pool[0].PlayOneShot(clip, gain);
     }
 
-    public void ToggleLoop(string clipName, float gain = 1f){
-        if (loopers.TryGetValue(clipName, out var src) && src.isPlaying){ src.Stop(); return; }
+    // [UPDATED] Overload for string (backwards compatibility)
+    public void OneShot(string clipName, float gain = 1f){
+        var clip = Load(clipName); 
+        if (clip) OneShot(clip, gain);
+    }
 
-        var clip = Load(clipName); if (!clip) return;
-        if (!loopers.TryGetValue(clipName, out src)){
+    // [UPDATED] Direct AudioClip support for loops
+    public void ToggleLoop(AudioClip clip, float gain = 1f){
+        if (!clip) return;
+        string id = clip.name; // Use clip name as ID
+
+        if (loopers.TryGetValue(id, out var src) && src.isPlaying){ 
+            src.Stop(); 
+            return; 
+        }
+
+        if (!loopers.TryGetValue(id, out src)){
             src = gameObject.AddComponent<AudioSource>();
             src.loop = true;
             src.playOnAwake = false;
             src.spatialBlend = 0f;
-            loopers[clipName] = src;
+            loopers[id] = src;
         }
         src.clip = clip;
         src.volume = gain;
         src.Play();
+    }
+    
+    // [UPDATED] Overload for string
+    public void ToggleLoop(string clipName, float gain = 1f){
+        var clip = Load(clipName);
+        if (clip) ToggleLoop(clip, gain);
     }
 }
