@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fed254b6232c4404c8bf9321cb27a299, type: 3}
+  m_Name: 2
+  m_EditorClassIdentifier: 
+  steps:
+  - padIndex: 0
+    colorSlot: 1
+    duration: 0.3
+    delay: 0
+  - padIndex: 9
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.06
+  - padIndex: 18
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.12
+  - padIndex: 27
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.18
+  - padIndex: 36
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.24
+  - padIndex: 45
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.3
+  - padIndex: 54
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.36
+  - padIndex: 63
+    colorSlot: 1
+    duration: 0.3
+    delay: 0.42
