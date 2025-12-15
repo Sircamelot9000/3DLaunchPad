@@ -10221,9 +10221,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   udpReceive: {fileID: 1891955678}
-  objectToControl: {fileID: 0}
-  riseSpeed: 5
-  curlThreshold: 0.05
   handPoints:
   - {fileID: 138817129}
   - {fileID: 1465578937}
@@ -10246,14 +10243,11 @@ MonoBehaviour:
   - {fileID: 11071566}
   - {fileID: 74781144}
   - {fileID: 1803663031}
-  sphereScale: 0.05
-  startOffset: {x: 5, y: 0, z: 1}
-  scaleX: 0.01
-  scaleY: 0.01
-  scaleZ: 0.01
-  globalMovementSpeed: 1
-  followSpeed: 30
-  flipZ: 1
+  spawnOffset: {x: 7.65, y: -10, z: 0}
+  flipY: 1
+  handSizeTrigger: 100
+  depthSensitivity: 15
+  smoothing: 15
 --- !u!4 &1897386388 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1497267672689963338, guid: c48c2646a20c0de4c928e3d517e02031,

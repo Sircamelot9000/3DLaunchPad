@@ -6,95 +6,71 @@ using System.Globalization;
 public class HandTracking : MonoBehaviour
 {
     public UDPReceive udpReceive;
-
-    [Header("Game Interaction (NEW)")]
-    public Transform objectToControl; // Drag the object you want to move here
-    public float riseSpeed = 5.0f;    // How fast the object moves up
-    public float curlThreshold = 0.05f; // <--- Adjust this if it's too sensitive!
-
-    [Header("Hand Sphere Settings")]
     public GameObject[] handPoints = new GameObject[21];
-    public float sphereScale = 0.05f;
 
-    [Header("Position Mapping")]
-    public Vector3 startOffset = new Vector3(0, 0, 0);
-    
-    [Tooltip("Adjust these to stretch movement on specific axes")]
-    public float scaleX = 0.01f;
-    public float scaleY = 0.01f;
-    public float scaleZ = 0.01f;
+    [Header("1. Spawn Position (Move Hand Here)")]
+    // CHANGE THESE NUMBERS to move the hand to your launchpad
+    public Vector3 spawnOffset = new Vector3(0, 0, 0);
 
-    [Header("Speed & Movement")]
-    [Tooltip("Multiplies all movement.")]
-    public float globalMovementSpeed = 1.0f; 
+    [Header("2. Orientation")]
+    public bool flipY = false;    // Check this if hand is upside down
 
-    [Tooltip("Smoothing speed.")]
-    public float followSpeed = 30f; 
+    [Header("3. Calibration")]
+    public float handSizeTrigger = 100f;   // If hand is bigger than this, it moves forward
+    public float depthSensitivity = 15f;   // How fast it moves forward/back
+    public float smoothing = 15f;          // Makes it less jittery
 
-    [Header("Axis Remapping")]
-    public bool flipZ = true;
-
-    // We need this array to do math between fingers
-    private Vector3[] currentLandmarks = new Vector3[21];
+    // Hard-coded offsets (Internal math)
+    private Vector3 mapScale = new Vector3(-0.02f, -0.02f, -0.05f); 
+    private Vector3 mapOffset = new Vector3(0, 5, 0); 
 
     void Update()
     {
         string data = udpReceive.data;
         if (string.IsNullOrEmpty(data)) return;
 
+        // Clean Data
         data = data.Replace("[", "").Replace("]", "");
         string[] points = data.Split(',');
 
         if (points.Length < 63) return;
 
+        // --- 1. CALCULATE DISTANCE ---
+        float wristX = float.Parse(points[0], CultureInfo.InvariantCulture);
+        float wristY = float.Parse(points[1], CultureInfo.InvariantCulture);
+        float midX = float.Parse(points[27], CultureInfo.InvariantCulture);
+        float midY = float.Parse(points[28], CultureInfo.InvariantCulture);
+
+        float currentHandSize = Vector2.Distance(new Vector2(wristX, wristY), new Vector2(midX, midY));
+        float zMove = (currentHandSize - handSizeTrigger) * (depthSensitivity * 0.001f);
+
+        // --- 2. MOVE THE POINTS ---
         for (int i = 0; i < 21; i++)
         {
             float rawX = float.Parse(points[i * 3], CultureInfo.InvariantCulture);
             float rawY = float.Parse(points[i * 3 + 1], CultureInfo.InvariantCulture);
             float rawZ = float.Parse(points[i * 3 + 2], CultureInfo.InvariantCulture);
 
-            // --- Your Original Calculation ---
-            float x = startOffset.x + (7 - rawX) * scaleX * globalMovementSpeed;
-            float y = startOffset.y + rawZ * scaleY * globalMovementSpeed;
-            float z = startOffset.z + (flipZ ? -rawY : rawY) * scaleZ * globalMovementSpeed;
+            // --- FLIP LOGIC ---
+            // If the box is checked, we invert the incoming Y pixel data
+            if (flipY) rawY = -rawY; 
 
-            // Define the target position
-            Vector3 targetPos = new Vector3(x, y, z);
+            // --- MAPPING ---
+            float x = (rawX * mapScale.x) + mapOffset.x;
+            
+            // Note: mapScale.y is negative in your code (-0.02f). 
+            // If flipY is true, we inverted rawY above, so the result flips.
+            float y = (rawY * mapScale.y) + mapOffset.y;
 
-            // --- Store position for Logic ---
-            currentLandmarks[i] = targetPos;
+            float z = zMove + (rawZ * mapScale.z);
+
+            // Add the Spawn Offset here so you can move the whole hand easily
+            Vector3 targetPos = new Vector3(x, y, z) + spawnOffset;
 
             if (handPoints[i] != null)
             {
-                // Apply Smoothing
-                handPoints[i].transform.localPosition = Vector3.Lerp(handPoints[i].transform.localPosition, targetPos, Time.deltaTime * followSpeed);
-
-                // Update Scale
-                handPoints[i].transform.localScale = Vector3.one * sphereScale;
+                handPoints[i].transform.localPosition = Vector3.Lerp(handPoints[i].transform.localPosition, targetPos, Time.deltaTime * smoothing);
             }
-        }
-
-        // --- NEW: Run the Gesture Check ---
-        CheckForCurl();
-    }
-
-    void CheckForCurl()
-    {
-        if (objectToControl == null) return;
-
-        // Get Index Tip (8) and Index Base/Knuckle (5)
-        Vector3 tip = currentLandmarks[8];
-        Vector3 knuckle = currentLandmarks[5];
-
-        // Check distance
-        float distance = Vector3.Distance(tip, knuckle);
-
-        // Debug.Log(distance); // Uncomment this line if you need to see the number to tune threshold
-
-        if (distance < curlThreshold)
-        {
-            // Finger is Curled -> Move Object UP (Y axis)
-            objectToControl.Translate(Vector3.up * riseSpeed * Time.deltaTime);
         }
     }
 }
