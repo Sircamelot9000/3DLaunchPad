@@ -35,8 +35,6 @@ public class UDPReceive : MonoBehaviour
                     byte[] buffer = client.Receive(ref anyIP);
 
                     // 2. LAG FIX: Drain the buffer!
-                    // If there are more packets waiting (old data), read them all instantly
-                    // and only keep the very last one.
                     while (client.Available > 0)
                     {
                         buffer = client.Receive(ref anyIP);

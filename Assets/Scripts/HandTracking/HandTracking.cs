@@ -35,17 +35,14 @@ public class HandTracking : MonoBehaviour
     // --- PHYSICS SETUP ---
     void Start()
     {
-        // This loop gives your spheres "physical bodies" so they can touch buttons
         for (int i = 0; i < handPoints.Length; i++)
         {
             if (handPoints[i] != null)
             {
                 GameObject p = handPoints[i];
 
-                // 1. Tag it (Make sure you created the 'Finger' tag in Unity!)
                 p.tag = "Finger";
 
-                // 2. Add Rigidbody (Required for collision detection)
                 if (p.GetComponent<Rigidbody>() == null)
                 {
                     Rigidbody rb = p.AddComponent<Rigidbody>();
@@ -53,12 +50,11 @@ public class HandTracking : MonoBehaviour
                     rb.isKinematic = true; // Moved by code, not gravity
                 }
 
-                // 3. Add Collider (The "skin" that touches triggers)
                 if (p.GetComponent<Collider>() == null)
                 {
                     SphereCollider col = p.AddComponent<SphereCollider>();
                     col.isTrigger = true; 
-                    col.radius = 0.1f; // Small touch radius
+                    col.radius = 0.1f;
                 }
             }
         }
@@ -112,9 +108,7 @@ public class HandTracking : MonoBehaviour
 
             Vector3 targetPos = new Vector3(x, y, z) + spawnOffset;
 
-            // --- NEW: WALL CLAMPING LOGIC ---
-            // If you assigned a wall, we limit the position so it can't go past it.
-            
+            // --- NEW: WALL CLAMPING LOGIC ---            
             if (wallLeft != null)
             {
                 // Stop if trying to go further Left than the wall
