@@ -11,7 +11,6 @@ public class UDPReceive : MonoBehaviour
     UdpClient client;
     public int port = 5052;
     public bool startReceiving = true; 
-    public bool printToConsole = false;
     public string data;
 
     public void Start()
@@ -26,26 +25,35 @@ public class UDPReceive : MonoBehaviour
         try 
         {
             client = new UdpClient(port);
+            IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
+
             while (startReceiving)
             {
                 try
                 {
-                    IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] dataByte = client.Receive(ref anyIP);
-                    data = Encoding.UTF8.GetString(dataByte);
+                    // 1. Block until we get at least one packet
+                    byte[] buffer = client.Receive(ref anyIP);
 
-                    if (printToConsole) { print(data); }
+                    // 2. LAG FIX: Drain the buffer!
+                    // If there are more packets waiting (old data), read them all instantly
+                    // and only keep the very last one.
+                    while (client.Available > 0)
+                    {
+                        buffer = client.Receive(ref anyIP);
+                    }
+
+                    // 3. Convert only the latest packet to string
+                    data = Encoding.UTF8.GetString(buffer);
                 }
-                // FIX: Removed 'err' variable name to stop the CS0168 warning
                 catch (Exception) 
                 {
-                    // We ignore errors here to prevent console spam when stopping
+                    // Socket closed or error, just ignore to prevent spam
                 }
             }
         }
         catch (Exception e)
         {
-            Debug.LogWarning("Socket Error: " + e.Message);
+            print(e.ToString());
         }
     }
 

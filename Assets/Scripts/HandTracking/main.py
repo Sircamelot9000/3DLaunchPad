@@ -17,9 +17,6 @@ serverAddressPort = ("127.0.0.1", 5052)
 while True:
     # Get the image frame
     success, img = cap.read()
-    
-    # --- FIX IS HERE: GET DIMENSIONS ---
-    # We must define 'h' (height) every frame to use it later
     h, w, _ = img.shape 
     
     # Find Hands
@@ -32,8 +29,6 @@ while True:
         lmList = hand["lmList"]
         
         for lm in lmList:
-            # Now 'h' is defined, so this line works
-            # We send: x, (height - y), z
             data.extend([lm[0], h - lm[1], lm[2]])
 
         # Send data to Unity
