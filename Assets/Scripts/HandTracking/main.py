@@ -8,7 +8,7 @@ cap.set(3, 640)  # Width
 cap.set(4, 480)  # Height
 
 # 2. SETUP DETECTOR
-detector = HandDetector(detectionCon=0.8, maxHands=1)
+detector = HandDetector(detectionCon=0.1, maxHands=1)
 
 # 3. SETUP UDP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

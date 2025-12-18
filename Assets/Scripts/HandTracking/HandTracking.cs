@@ -11,7 +11,15 @@ public class HandTracking : MonoBehaviour
     [Header("1. Settings")]
     public Vector3 spawnOffset = new Vector3(0, 0, 0); 
     [Range(0.1f, 2f)] public float handGlobalScale = 1.0f; 
-    public bool showOnlyTips = true;     
+    public bool showOnlyTips = true;    
+
+    // --- INDIVIDUAL FINGER OFFSETS (Tune these to flatten hand) ---
+    [Header("Finger Height Offsets")]
+    public float offsetThumb = 0.05f;  // Moves Thumb Up
+    public float offsetIndex = 0.0f;   
+    public float offsetMiddle = 0.0f;
+    public float offsetRing = 0.0f;
+    public float offsetPinky = 0.02f;  // Moves Pinky Up
 
     [Header("2. Orientation")]
     public bool flipY = false;
@@ -21,11 +29,20 @@ public class HandTracking : MonoBehaviour
     public float depthSensitivity = 15f;
     public float smoothing = 15f;
 
-    [Header("4. Invisible Walls (Drag Cubes Here)")]
+    [Header("4. Invisible Walls")]
     public Transform wallLeft;   
     public Transform wallRight;  
     public Transform wallFront;  
     public Transform wallBase;   
+
+    [Header("5. Vertical Press Guide")]
+    [Tooltip("If true, locks horizontal movement when pressing down (Anti-Drift).")]
+    public bool useVerticalGuide = true; 
+    
+    [Tooltip("The height where the Lock activates. Applies to ALL 5 fingers.")]
+    public float guideStartHeight = 0.15f; 
+
+    [Range(0.0f, 1.0f)] public float guideStrength = 0.95f; 
 
     // Internal math
     private Vector3 mapScale = new Vector3(-0.02f, -0.02f, -0.05f); 
@@ -33,7 +50,6 @@ public class HandTracking : MonoBehaviour
 
     void Start()
     {
-        // Physics Setup
         for (int i = 0; i < handPoints.Length; i++)
         {
             if (handPoints[i] != null)
@@ -80,28 +96,36 @@ public class HandTracking : MonoBehaviour
         {
             if (handPoints[i] == null) continue;
 
-            // Visibility
             bool isTip = (i == 4 || i == 8 || i == 12 || i == 16 || i == 20);
-            if (showOnlyTips && !isTip) { handPoints[i].SetActive(false); continue; }
+            if (showOnlyTips && !isTip) 
+            { 
+                handPoints[i].SetActive(false); 
+                continue; 
+            }
             handPoints[i].SetActive(true);
 
-            // Parse
             float rawX = float.Parse(points[i * 3], CultureInfo.InvariantCulture);
             float rawY = float.Parse(points[i * 3 + 1], CultureInfo.InvariantCulture);
             float rawZ = float.Parse(points[i * 3 + 2], CultureInfo.InvariantCulture);
 
             if (flipY) rawY = -rawY; 
 
-            // Scale
             float x = (rawX * mapScale.x * handGlobalScale) + mapOffset.x;
             float y = (rawY * mapScale.y * handGlobalScale) + mapOffset.y;
             float z = zMove + (rawZ * mapScale.z * handGlobalScale);
 
+            // --- APPLY INDIVIDUAL OFFSETS ---
+            if (i == 4)  y += offsetThumb;
+            if (i == 8)  y += offsetIndex;
+            if (i == 12) y += offsetMiddle;
+            if (i == 16) y += offsetRing;
+            if (i == 20) y += offsetPinky;
+
             Vector3 targetPos = new Vector3(x, y, z) + spawnOffset;
             
+            // --- WALLS ---
             if (wallLeft != null)
             {
-                // Convert Wall World Pos -> Local Pos
                 float limit = transform.InverseTransformPoint(wallLeft.position).x;
                 if (targetPos.x < limit) targetPos.x = limit;
             }
@@ -121,11 +145,22 @@ public class HandTracking : MonoBehaviour
             if (wallBase != null)
             {
                 float limit = transform.InverseTransformPoint(wallBase.position).y;
-                // If hand is lower than the floor limit, snap to limit
                 if (targetPos.y < limit) targetPos.y = limit;
+
+                // --- VERTICAL GUIDE (ANTI-DRIFT ONLY) ---
+                if (useVerticalGuide && isTip)
+                {
+                    float distToFloor = Mathf.Abs(targetPos.y - limit);
+
+                    if (distToFloor < guideStartHeight)
+                    {
+                        Vector3 currentPos = handPoints[i].transform.localPosition;
+                        targetPos.x = Mathf.Lerp(targetPos.x, currentPos.x, guideStrength);
+                        targetPos.z = Mathf.Lerp(targetPos.z, currentPos.z, guideStrength);
+                    }
+                }
             }
 
-            // Move
             handPoints[i].transform.localPosition = Vector3.Lerp(handPoints[i].transform.localPosition, targetPos, Time.deltaTime * smoothing);
         }
     }
