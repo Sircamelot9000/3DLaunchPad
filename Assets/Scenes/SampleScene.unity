@@ -8290,9 +8290,9 @@ MonoBehaviour:
   - {fileID: 11071566}
   - {fileID: 74781144}
   - {fileID: 1803663031}
-  spawnOffset: {x: 4, y: -10, z: -1.5}
+  spawnOffset: {x: 4, y: -10, z: -1.8}
   handGlobalScale: 0.5
-  showOnlyTips: 1
+  showOnlyTips: 0
   offsetThumb: 0.3
   offsetIndex: 0
   offsetMiddle: 0

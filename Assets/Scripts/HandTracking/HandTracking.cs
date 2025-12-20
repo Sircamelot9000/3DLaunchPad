@@ -13,13 +13,13 @@ public class HandTracking : MonoBehaviour
     [Range(0.1f, 2f)] public float handGlobalScale = 1.0f; 
     public bool showOnlyTips = true;    
 
-    // --- INDIVIDUAL FINGER OFFSETS (Tune these to flatten hand) ---
+    // --- INDIVIDUAL FINGER OFFSETS ---
     [Header("Finger Height Offsets")]
-    public float offsetThumb = 0.05f;  // Moves Thumb Up
+    public float offsetThumb = 0.05f;  
     public float offsetIndex = 0.0f;   
     public float offsetMiddle = 0.0f;
     public float offsetRing = 0.0f;
-    public float offsetPinky = 0.02f;  // Moves Pinky Up
+    public float offsetPinky = 0.02f;  
 
     [Header("2. Orientation")]
     public bool flipY = false;
@@ -39,7 +39,7 @@ public class HandTracking : MonoBehaviour
     [Tooltip("If true, locks horizontal movement when pressing down (Anti-Drift).")]
     public bool useVerticalGuide = true; 
     
-    [Tooltip("The height where the Lock activates. Applies to ALL 5 fingers.")]
+    [Tooltip("The height where the Lock activates.")]
     public float guideStartHeight = 0.15f; 
 
     [Range(0.0f, 1.0f)] public float guideStrength = 0.95f; 
@@ -55,7 +55,19 @@ public class HandTracking : MonoBehaviour
             if (handPoints[i] != null)
             {
                 GameObject p = handPoints[i];
-                p.tag = "Finger";
+
+                // 1. Identify if this point is a fingertip
+                bool isTip = (i == 4 || i == 8 || i == 12 || i == 16 || i == 20);
+                if (isTip) 
+                {
+                    p.tag = "Finger";
+                }
+                else 
+                {
+                    p.tag = "Untagged"; 
+                }
+                // -----------------------
+
                 if (p.GetComponent<Rigidbody>() == null)
                 {
                     Rigidbody rb = p.AddComponent<Rigidbody>();
