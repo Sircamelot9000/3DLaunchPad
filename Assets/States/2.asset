@@ -13,35 +13,43 @@ MonoBehaviour:
   m_Name: 2
   m_EditorClassIdentifier: 
   steps:
-  - padIndex: 0
-    colorSlot: 1
-    duration: 0.3
-    delay: 0
-  - padIndex: 9
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.06
-  - padIndex: 18
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.12
   - padIndex: 27
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.18
+    colorSlot: 6
+    duration: 0.2
+    delay: 0
+    stayOn: 0
+  - padIndex: 28
+    colorSlot: 6
+    duration: 0.2
+    delay: 0.2
+    stayOn: 0
+  - padIndex: 29
+    colorSlot: 6
+    duration: 0.2
+    delay: 0.4
+    stayOn: 0
+  - padIndex: 30
+    colorSlot: 6
+    duration: 0.2
+    delay: 0.6
+    stayOn: 0
+  - padIndex: 35
+    colorSlot: 6
+    duration: 0.2
+    delay: 0.8
+    stayOn: 0
   - padIndex: 36
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.24
-  - padIndex: 45
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.3
-  - padIndex: 54
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.36
-  - padIndex: 63
-    colorSlot: 1
-    duration: 0.3
-    delay: 0.42
+    colorSlot: 6
+    duration: 0.2
+    delay: 1
+    stayOn: 0
+  - padIndex: 37
+    colorSlot: 6
+    duration: 0.2
+    delay: 1.2
+    stayOn: 0
+  - padIndex: 38
+    colorSlot: 6
+    duration: 0.2
+    delay: 1.4
+    stayOn: 0

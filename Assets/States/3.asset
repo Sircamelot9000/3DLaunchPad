@@ -13,23 +13,198 @@ MonoBehaviour:
   m_Name: 3
   m_EditorClassIdentifier: 
   steps:
-  - padIndex: 29
+  - padIndex: 0
     colorSlot: 0
     duration: 0.3
     delay: 0
     stayOn: 0
-  - padIndex: 37
-    colorSlot: 1
+  - padIndex: 1
+    colorSlot: 0
     duration: 0.3
     delay: 0.06
     stayOn: 0
-  - padIndex: 45
-    colorSlot: 2
+  - padIndex: 8
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.06
+    stayOn: 0
+  - padIndex: 2
+    colorSlot: 0
     duration: 0.3
     delay: 0.12
     stayOn: 0
-  - padIndex: 53
-    colorSlot: 3
+  - padIndex: 16
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.12
+    stayOn: 0
+  - padIndex: 3
+    colorSlot: 0
     duration: 0.3
     delay: 0.18
+    stayOn: 0
+  - padIndex: 24
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.18
+    stayOn: 0
+  - padIndex: 4
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.24
+    stayOn: 0
+  - padIndex: 32
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.24
+    stayOn: 0
+  - padIndex: 5
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.3
+    stayOn: 0
+  - padIndex: 40
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.3
+    stayOn: 0
+  - padIndex: 6
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.36
+    stayOn: 0
+  - padIndex: 48
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.36
+    stayOn: 0
+  - padIndex: 7
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.42
+    stayOn: 0
+  - padIndex: 56
+    colorSlot: 0
+    duration: 0.3
+    delay: 0.42
+    stayOn: 0
+  - padIndex: 15
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.48
+    stayOn: 0
+  - padIndex: 57
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.48
+    stayOn: 0
+  - padIndex: 14
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.54
+    stayOn: 0
+  - padIndex: 49
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.54
+    stayOn: 0
+  - padIndex: 13
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.6
+    stayOn: 0
+  - padIndex: 41
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.6
+    stayOn: 0
+  - padIndex: 12
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.66
+    stayOn: 0
+  - padIndex: 33
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.66
+    stayOn: 0
+  - padIndex: 11
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.72
+    stayOn: 0
+  - padIndex: 25
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.72
+    stayOn: 0
+  - padIndex: 10
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.78
+    stayOn: 0
+  - padIndex: 17
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.78
+    stayOn: 0
+  - padIndex: 9
+    colorSlot: 2
+    duration: 0.3
+    delay: 0.84
+    stayOn: 0
+  - padIndex: 18
+    colorSlot: 4
+    duration: 0.3
+    delay: 0.9
+    stayOn: 0
+  - padIndex: 19
+    colorSlot: 4
+    duration: 0.3
+    delay: 0.96
+    stayOn: 0
+  - padIndex: 26
+    colorSlot: 4
+    duration: 0.3
+    delay: 0.96
+    stayOn: 0
+  - padIndex: 20
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.02
+    stayOn: 0
+  - padIndex: 34
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.02
+    stayOn: 0
+  - padIndex: 21
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.08
+    stayOn: 0
+  - padIndex: 42
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.08
+    stayOn: 0
+  - padIndex: 22
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.14
+    stayOn: 0
+  - padIndex: 50
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.14
+    stayOn: 0
+  - padIndex: 23
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.2
+    stayOn: 0
+  - padIndex: 58
+    colorSlot: 4
+    duration: 0.3
+    delay: 1.2
     stayOn: 0
