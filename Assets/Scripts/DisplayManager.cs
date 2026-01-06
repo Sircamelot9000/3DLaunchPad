@@ -15,8 +15,8 @@ public class DisplayManager : MonoBehaviour
 
     // Internal "Virtual" values to display on screen
     private float dispVol = 0.5f;
-    private float dispRev = 0f;
-    private float dispDist = 0f;
+    private float dispRev = 0.5f;
+    private float dispDist = 0.5f;
 
     void Awake()
     {

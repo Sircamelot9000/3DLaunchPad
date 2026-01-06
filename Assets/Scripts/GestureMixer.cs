@@ -46,13 +46,10 @@ public class GestureMixer : MonoBehaviour
 
         // 4. Calculate Movement (LEFT / RIGHT)
         // ---------------------------------------------------------
-        float currentX = thumbPos.x; // Use X axis now
+        float currentX = thumbPos.x; // Use X axis
         
         if (!isMixing) lastX = currentX;
-        
-        // Calculate difference. 
-        // Move Right (+X) = Positive Delta (Volume Up)
-        // Move Left (-X) = Negative Delta (Volume Down)
+    
         float delta = (currentX - lastX) * sensitivity;
         // ---------------------------------------------------------
 
@@ -98,8 +95,6 @@ public class GestureMixer : MonoBehaviour
                 DisplayManager.I.SetActive(true);
                 DisplayManager.I.UpdateDisplay(delta, activeMode);
             }
-            // Optional: Hide UI immediately when letting go
-            // else DisplayManager.I.SetActive(false); 
         }
 
         lastX = currentX; // Remember position for next frame
