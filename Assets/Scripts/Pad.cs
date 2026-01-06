@@ -2,31 +2,30 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum PadActionType { Sample, Light, State, Transport } 
+public enum PadActionType { Sample, Light, State }
 
 [System.Serializable]
 public class PadActionEntry
 {
-    [Header("Main Settings")]
     public PadActionType type = PadActionType.Sample; 
     [Min(0f)] public float startDelay = 0f;
 
-    [Header("Sample")]
+    [Header("Sample Settings")]
     public AudioClip clip;
-    public bool loop;
+    public bool loop; 
     [Range(0f,1f)] public float gain = 1f;
 
-    [Header("Light")]
+    // --- NEW FEATURE CHECKBOX ---
+    [Tooltip("Check this if you want to change this sound with Hand Gestures.")]
+    public bool affectedByGestures = false; 
+    // ----------------------------
+
+    [Header("Light Settings")]
     [Range(0,8)] public int colorSlot = 0;
     public bool lightStayOn = false; 
     public float lightDuration = 0.25f;
-
-    [Header("State")]
     public LightStateSO stateAsset;
     public bool loopState = false; 
-
-    [Header("Transport")]
-    public string transport = ""; 
 }
 
 [System.Serializable]
@@ -43,36 +42,35 @@ public class Pad : MonoBehaviour
     public List<PadProfile> profiles = new();
     [SerializeField] private int currentProfileIndex = 0;
 
-    // Prevents double-triggering
-    private bool isPressed = false;
+    private float lastPressTime = -1f;
+    private float cooldown = 0.25f; 
 
     void Awake(){
         if (!rend) rend = GetComponent<Renderer>();
         if (rend) baseMaterial = rend.material; 
         
-        // Ensure Pad detects physics
         Collider col = GetComponent<Collider>();
         if (!col) col = gameObject.AddComponent<BoxCollider>();
         col.isTrigger = true; 
     }
 
-    // --- NEW: PHYSICS TRIGGER ---
     void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Finger") && !isPressed) {
-            isPressed = true;
-            Press(1f);
-        }
+        if (other.CompareTag("Finger")) TryPress();
     }
 
-    void OnTriggerExit(Collider other) {
-        if (other.CompareTag("Finger")) isPressed = false;
-    }
+    void OnMouseDown(){ TryPress(); }
 
-    // Keep Mouse for testing
-    void OnMouseDown(){ Press(1f); }
+    void TryPress() {
+        if (PauseManager.I != null && PauseManager.I.isPaused) return;
+        if (Time.time < lastPressTime + cooldown) return;
+        
+        lastPressTime = Time.time;
+        Press(1f);
+    }
 
     public void Press(float velocity = 1f){
         LightDirector.I.StopStateLoop(index);
+
         if (profiles.Count == 0) { StartCoroutine(Punch()); return; }
 
         var activeProfile = profiles[currentProfileIndex];
@@ -86,11 +84,21 @@ public class Pad : MonoBehaviour
 
     IEnumerator RunAction(PadActionEntry a, float velocity){
         if (a.startDelay > 0f) yield return new WaitForSeconds(a.startDelay);
+        
         switch (a.type){
-            case PadActionType.Transport: if (!string.IsNullOrEmpty(a.transport)) AudioHub.I.Transport(a.transport); break;
-            case PadActionType.Sample: if (a.clip) { if (a.loop) AudioHub.I.ToggleLoop(a.clip, a.gain); else AudioHub.I.OneShot(a.clip, a.gain); } break;
-            case PadActionType.Light: LightDirector.I.LightOneBySlot(index, a.colorSlot, a.lightDuration, 0, a.lightStayOn); break;
-            case PadActionType.State: if (a.stateAsset) LightDirector.I.TriggerState(index, a.stateAsset, a.loopState); break;
+            case PadActionType.Sample: 
+                if (a.clip) { 
+                    // Pass the checkbox setting to AudioHub
+                    if (a.loop) AudioHub.I.ToggleLoop(a.clip, a.gain, a.affectedByGestures); 
+                    else AudioHub.I.OneShot(a.clip, a.gain, a.affectedByGestures); 
+                } 
+                break;
+            case PadActionType.Light: 
+                LightDirector.I.LightOneBySlot(index, a.colorSlot, a.lightDuration, 0, a.lightStayOn); 
+                break;
+            case PadActionType.State: 
+                if (a.stateAsset) LightDirector.I.TriggerState(index, a.stateAsset, a.loopState); 
+                break;
         }
     }
 
