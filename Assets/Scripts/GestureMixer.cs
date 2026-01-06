@@ -6,14 +6,15 @@ public class GestureMixer : MonoBehaviour
     public HandTracking handTracking; 
     
     [Header("Visual Feedback")]
-    public Material matNormal; // Red Material
-    public Material matActive; // Green Material
+    public Material matNormal; // Red
+    public Material matActive; // Green
 
     [Header("Settings")]
     public float sensitivity = 3.0f;
     public float pinchDistance = 0.08f; 
 
-    private float lastY = 0f;
+    // CHANGED: We now track X (Horizontal) instead of Y
+    private float lastX = 0f; 
     private bool isMixing = false;
     private Renderer thumbRend;
 
@@ -31,26 +32,33 @@ public class GestureMixer : MonoBehaviour
 
         if (thumbObj == null || !thumbObj.activeInHierarchy) {
             isMixing = false;
-            if(DisplayManager.I) DisplayManager.I.SetActive(false); // Hide UI if hand lost
+            if(DisplayManager.I) DisplayManager.I.SetActive(false);
             return;
         }
 
         if(thumbRend == null) thumbRend = thumbObj.GetComponent<Renderer>();
 
-        // 3. Measure Pinch
+        // 3. Measure Pinch Distances
         Vector3 thumbPos = thumbObj.transform.position;
         float distIndex = Vector3.Distance(thumbPos, indexObj.transform.position);
         float distMiddle = Vector3.Distance(thumbPos, middleObj.transform.position);
         float distRing = Vector3.Distance(thumbPos, ringObj.transform.position);
 
-        // 4. Calculate Delta
-        float currentY = thumbPos.y;
-        if (!isMixing) lastY = currentY;
-        float delta = (currentY - lastY) * sensitivity;
+        // 4. Calculate Movement (LEFT / RIGHT)
+        // ---------------------------------------------------------
+        float currentX = thumbPos.x; // Use X axis now
+        
+        if (!isMixing) lastX = currentX;
+        
+        // Calculate difference. 
+        // Move Right (+X) = Positive Delta (Volume Up)
+        // Move Left (-X) = Negative Delta (Volume Down)
+        float delta = (currentX - lastX) * sensitivity;
+        // ---------------------------------------------------------
 
         // 5. Logic
         bool isPinchingAny = false;
-        int activeMode = -1; // -1:None, 0:Vol, 1:Rev, 2:Dist
+        int activeMode = -1;
 
         // Ring (Distortion)
         if (distRing < pinchDistance)
@@ -76,30 +84,24 @@ public class GestureMixer : MonoBehaviour
             isPinchingAny = false;
         }
 
-        // 6. UPDATE VISUALS & UI
-        
-        // A. Update Material Color
+        // 6. Visuals & UI
         if (thumbRend != null && matNormal != null && matActive != null)
         {
             if (isPinchingAny && thumbRend.sharedMaterial != matActive) thumbRend.material = matActive;
             else if (!isPinchingAny && thumbRend.sharedMaterial != matNormal) thumbRend.material = matNormal;
         }
 
-        // B. Update Screen UI
         if (DisplayManager.I)
         {
             if (isPinchingAny)
             {
-                DisplayManager.I.SetActive(true); // Show UI
-                DisplayManager.I.UpdateDisplay(delta, activeMode); // Move Slider
+                DisplayManager.I.SetActive(true);
+                DisplayManager.I.UpdateDisplay(delta, activeMode);
             }
-            else
-            {
-                // Optional: Keep UI visible for a moment or hide immediately
-                // DisplayManager.I.SetActive(false); 
-            }
+            // Optional: Hide UI immediately when letting go
+            // else DisplayManager.I.SetActive(false); 
         }
 
-        lastY = currentY;
+        lastX = currentX; // Remember position for next frame
     }
 }
